@@ -18,9 +18,35 @@ class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFolder;
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Content Management';
+
+    protected static ?string $navigationLabel = 'Projects';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'title';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
+
+    public static function getModelLabel(): string
+    {
+        return 'Project';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Projects';
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -34,9 +60,7 @@ class ProjectResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

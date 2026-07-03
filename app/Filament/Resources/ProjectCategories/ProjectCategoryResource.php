@@ -22,7 +22,23 @@ class ProjectCategoryResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Content Management';
+
+    protected static ?string $navigationLabel = 'Project Categories';
+
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -41,9 +57,7 @@ class ProjectCategoryResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
@@ -54,5 +68,15 @@ class ProjectCategoryResource extends Resource
             'view' => ViewProjectCategory::route('/{record}'),
             'edit' => EditProjectCategory::route('/{record}/edit'),
         ];
+    }
+
+    public static function getModelLabel(): string
+    {
+        return 'Project Category';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Project Categories';
     }
 }

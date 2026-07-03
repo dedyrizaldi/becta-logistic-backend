@@ -4,12 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Spatie\MediaLibrary\MediaCollections\File;
-use Spatie\MediaLibrary\Conversions\Manipulations;
 
 class Project extends Model implements HasMedia
 {
@@ -21,7 +18,6 @@ class Project extends Model implements HasMedia
         'slug',
         'client',
         'location',
-        'thumbnail', // sementara masih dipertahankan
         'excerpt',
         'description',
         'completed_at',
@@ -41,41 +37,48 @@ class Project extends Model implements HasMedia
         ];
     }
 
+    /**
+     * Category Relation
+     */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(ProjectCategory::class);
+        return $this->belongsTo(
+            ProjectCategory::class,
+            'project_category_id',
+            'id'
+        );
     }
 
+    /**
+     * Media Collections
+     */
     public function registerMediaCollections(): void
     {
         $this
             ->addMediaCollection('thumbnail')
-            ->singleFile()
-            ->acceptsMimeTypes([
-                'image/jpeg',
-                'image/png',
-                'image/webp',
-            ]);
+            ->singleFile();
 
         $this
-            ->addMediaCollection('gallery')
-            ->acceptsMimeTypes([
-                'image/jpeg',
-                'image/png',
-                'image/webp',
-            ]);
+            ->addMediaCollection('gallery');
     }
 
+    /**
+     * Media Conversions
+     */
     public function registerMediaConversions(?Media $media = null): void
     {
         $this
             ->addMediaConversion('thumb')
-            ->fit(Fit::Crop, 600, 400)
+            ->width(500)
+            ->height(350)
+            ->sharpen(10)
             ->performOnCollections('thumbnail');
 
         $this
             ->addMediaConversion('gallery_thumb')
-            ->fit(Fit::Crop, 400, 300)
+            ->width(600)
+            ->height(400)
+            ->sharpen(10)
             ->performOnCollections('gallery');
     }
 }

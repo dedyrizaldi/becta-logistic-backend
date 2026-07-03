@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+
+class HeroSlider extends Model implements HasMedia
+{
+    use InteractsWithMedia;
+
+    protected $fillable = [
+
+        'title',
+
+        'subtitle',
+
+        'description',
+
+        'primary_button_text',
+        'primary_button_url',
+
+        'secondary_button_text',
+        'secondary_button_url',
+
+        'sort_order',
+
+        'is_active',
+
+    ];
+
+    protected $casts = [
+
+        'is_active' => 'boolean',
+
+    ];
+
+    public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection('desktop')
+            ->singleFile();
+
+        $this
+            ->addMediaCollection('mobile')
+            ->singleFile();
+    }
+}
