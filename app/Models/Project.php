@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Database\Eloquent\Builder;
 
 class Project extends Model implements HasMedia
 {
@@ -80,5 +81,20 @@ class Project extends Model implements HasMedia
             ->height(400)
             ->sharpen(10)
             ->performOnCollections('gallery');
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeFeatured(Builder $query): Builder
+    {
+        return $query->where('is_featured', true);
+    }
+
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->whereNotNull('completed_at');
     }
 }

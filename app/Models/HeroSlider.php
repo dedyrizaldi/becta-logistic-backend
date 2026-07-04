@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use App\Observers\HeroSliderObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+#[ObservedBy([HeroSliderObserver::class])]
 class HeroSlider extends Model implements HasMedia
 {
     use InteractsWithMedia;
@@ -36,6 +40,12 @@ class HeroSlider extends Model implements HasMedia
 
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | Media Collections
+    |--------------------------------------------------------------------------
+    */
+
     public function registerMediaCollections(): void
     {
         $this
@@ -45,5 +55,26 @@ class HeroSlider extends Model implements HasMedia
         $this
             ->addMediaCollection('mobile')
             ->singleFile();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Query Scopes
+    |--------------------------------------------------------------------------
+    */
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeInactive(Builder $query): Builder
+    {
+        return $query->where('is_active', false);
+    }
+
+    public function scopeOrdered(Builder $query): Builder
+    {
+        return $query->orderBy('sort_order');
     }
 }

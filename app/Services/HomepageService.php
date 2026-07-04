@@ -2,129 +2,33 @@
 
 namespace App\Services;
 
-use App\Models\Fleet;
-use App\Models\HeroSlider;
-use App\Models\Journey;
-use App\Models\News;
-use App\Models\Project;
-use App\Models\Service;
-use App\Models\TrustedClient;
-use App\Models\WebsiteSetting;
+use App\Repositories\Contracts\HomepageRepositoryInterface;
+use App\Support\CacheKeys;
+use Illuminate\Support\Facades\Cache;
+use Carbon\CarbonInterval;
 
 class HomepageService
 {
-    public function getHomepageData(): array
+    public function __construct(
+        protected HomepageRepositoryInterface $repository
+    ) {
+    }
+
+    public function getHomepage(): array
     {
-        return [
+        return Cache::remember(
 
-            /*
-            |--------------------------------------------------------------------------
-            | Website Settings
-            |--------------------------------------------------------------------------
-            */
+            CacheKeys::HOMEPAGE,
 
-            'website' => WebsiteSetting::query()->first(),
+            CarbonInterval::minutes(30),
 
-            /*
-            |--------------------------------------------------------------------------
-            | Hero Slider
-            |--------------------------------------------------------------------------
-            */
+            fn () => $this->repository->getHomepageData()
 
-            'hero' => HeroSlider::query()
-                ->where('is_active', true)
-                ->orderBy('sort_order')
-                ->get(),
+        );
+    }
 
-            /*
-            |--------------------------------------------------------------------------
-            | Trusted Clients
-            |--------------------------------------------------------------------------
-            */
-
-            'trusted_clients' => TrustedClient::query()
-                ->where('is_active', true)
-                ->orderBy('sort_order')
-                ->get(),
-
-            /*
-            |--------------------------------------------------------------------------
-            | Journey
-            |--------------------------------------------------------------------------
-            */
-
-            'journey' => Journey::query()
-                ->where('is_active', true)
-                ->orderBy('sort_order')
-                ->get(),
-
-            /*
-            |--------------------------------------------------------------------------
-            | Featured Services
-            |--------------------------------------------------------------------------
-            */
-
-            'featured_services' => Service::query()
-                ->with([
-                    'category',
-                    'media',
-                ])
-                ->where('is_active', true)
-                ->where('is_featured', true)
-                ->orderBy('sort_order')
-                ->take(6)
-                ->get(),
-
-            /*
-            |--------------------------------------------------------------------------
-            | Featured Projects
-            |--------------------------------------------------------------------------
-            */
-
-            'featured_projects' => Project::query()
-                ->with([
-                    'category',
-                    'media',
-                ])
-                ->where('is_active', true)
-                ->where('is_featured', true)
-                ->latest()
-                ->take(6)
-                ->get(),
-
-            /*
-            |--------------------------------------------------------------------------
-            | Featured Fleets
-            |--------------------------------------------------------------------------
-            */
-
-            'featured_fleets' => Fleet::query()
-                ->with([
-                    'category',
-                    'media',
-                ])
-                ->where('is_active', true)
-                ->where('is_featured', true)
-                ->orderBy('sort_order')
-                ->take(6)
-                ->get(),
-
-            /*
-            |--------------------------------------------------------------------------
-            | Latest News
-            |--------------------------------------------------------------------------
-            */
-
-            'latest_news' => News::query()
-                ->with([
-                    'category',
-                    'media',
-                ])
-                ->where('is_active', true)
-                ->latest('published_at')
-                ->take(3)
-                ->get(),
-
-        ];
+    public function clearHomepageCache(): void
+    {
+        Cache::forget(CacheKeys::HOMEPAGE);
     }
 }
