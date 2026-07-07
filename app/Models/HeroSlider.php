@@ -46,6 +46,20 @@ class HeroSlider extends Model implements HasMedia
     |--------------------------------------------------------------------------
     */
 
+    // public function registerMediaCollections(): void
+    // {
+    //     $this
+    //         ->addMediaCollection('desktop')
+    //         ->useDisk('public')
+    //         ->singleFile();
+
+    //     $this
+    //         ->addMediaCollection('mobile')
+    //         ->useDisk('public')
+    //         ->singleFile();
+    // }
+
+    //old function registerMediaCollections(): void
     public function registerMediaCollections(): void
     {
         $this
