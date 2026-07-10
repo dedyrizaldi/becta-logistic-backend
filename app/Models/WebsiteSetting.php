@@ -33,6 +33,13 @@ class WebsiteSetting extends Model implements HasMedia
         'mobile',
         'whatsapp',
         'fax',
+
+        /*
+        |--------------------------------------------------------------------------
+        | Address
+        |--------------------------------------------------------------------------
+        */
+
         'address',
         'latitude',
         'longitude',
@@ -41,7 +48,7 @@ class WebsiteSetting extends Model implements HasMedia
 
         /*
         |--------------------------------------------------------------------------
-        | Social Media
+        | Social
         |--------------------------------------------------------------------------
         */
 
@@ -69,14 +76,6 @@ class WebsiteSetting extends Model implements HasMedia
 
         'default_seo_title',
         'default_seo_description',
-
-    ];
-
-    protected $casts = [
-
-        'latitude' => 'decimal:7',
-
-        'longitude' => 'decimal:7',
 
     ];
 
