@@ -20,7 +20,7 @@ class HomepageService
 
             CacheKeys::HOMEPAGE,
 
-            CarbonInterval::minutes(30),
+            CarbonInterval::second(1),
 
             fn () => $this->repository->getHomepageData()
 

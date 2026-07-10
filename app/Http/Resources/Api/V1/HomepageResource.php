@@ -75,7 +75,6 @@ class HomepageResource extends JsonResource
             'latest_news' => NewsCardResource::collection(
                 $this['latest_news']
             ),
-
         ];
     }
 }
