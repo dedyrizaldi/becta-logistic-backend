@@ -13,17 +13,53 @@ class NewsController extends ApiController
 {
     /**
      * GET /api/v1/news
+     *
+     * Query Parameters:
+     * ?page=1
+     * ?q=lct
+     * ?category=transportation
+     * ?sort=latest|oldest|popular|title
      */
     public function index(Request $request)
     {
+        $keyword = $request->get('q');
+        $category = $request->get('category');
+        $sort = $request->get('sort', 'latest');
+
         $query = News::query()
             ->with([
                 'category',
                 'media',
             ])
-            ->where('is_active', true);
+            ->where('is_active', true)
 
-        switch ($request->get('sort')) {
+            // Search
+            ->when($keyword, function ($query) use ($keyword) {
+
+                $query->where(function ($query) use ($keyword) {
+
+                    $query->where('title', 'like', "%{$keyword}%")
+                        ->orWhere('excerpt', 'like', "%{$keyword}%")
+                        ->orWhere('description', 'like', "%{$keyword}%")
+                        ->orWhere('author', 'like', "%{$keyword}%");
+
+                });
+
+            })
+
+            // Category
+            ->when($category, function ($query) use ($category) {
+
+                $query->whereHas('category', function ($query) use ($category) {
+
+                    $query->where('slug', $category);
+
+                });
+
+            });
+
+        // Sorting
+        switch ($sort) {
 
             case 'title':
                 $query->orderBy('title');
@@ -42,7 +78,7 @@ class NewsController extends ApiController
                 break;
         }
 
-        $news = $query->paginate(9);
+        $news = $query->paginate(9)->withQueryString();
 
         return new NewsCollection($news);
     }
